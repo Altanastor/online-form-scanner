@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "library(shiny)\nlibrary(shinyjs)\n\nshinyUI(fluidPage(\n  useShinyjs(),\n  wellPanel(\n    fileInput(\"fileUpload\", \"Upload a PDF file or .zip file of jpeg photos.\"),\n    selectInput(\"formType\", \"Form Type\",\n                c(\"Hybrid\" = \"/home/shiny/formscanner/Hybrid_v3.xtmpl\", \"Numeric\", \"Multiple Choice\")),\n    downloadButton(\"downloadFile\", \"Download\")\n  )\n))\n",
+    "created" : 1506059473337.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "238347490",
+    "id" : "FF156D0A",
+    "lastKnownWriteTime" : 1506227951,
+    "last_content_update" : 1506227951692,
+    "path" : "~/Documents/RScripts/OMR/ui.R",
+    "project_path" : "ui.R",
+    "properties" : {
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

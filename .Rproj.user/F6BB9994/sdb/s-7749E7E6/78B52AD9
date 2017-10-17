@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "library(shiny)\nlibrary(shinyjs)\n\nshinyServer(function(input, output, session) {\n  \n  shinyjs::disable(\"downloadFile\")\n  \n  tempDirectory = paste0(tempdir(), \"/\", format(Sys.time(), \"%Y%m%d%H%M%S\"), sample(0:100, 1))\n  \n  observeEvent(input$fileUpload, {\n    \n    if(dir.exists(tempDirectory)) {\n      shinyjs::disable(\"downloadFile\")\n      unlink(tempDirectory, recursive = TRUE)\n    }\n    \n    print(tempDirectory)\n    \n    inputFile = input$fileUpload\n    dir.create(tempDirectory)\n    setwd(tempDirectory)\n    dir.create(\"images\")\n    file.copy(inputFile$datapath, \"forms.pdf\")\n    system(\"nconvert -xall -dpi 300 -out jpeg -o images/%.jpeg forms.pdf\")\n    system(paste(\"/bin/bash formscanner\", input$formType, \"images\"))\n    system(\"mv images/*.csv result.tmp\")\n    system(\"java -jar /home/shiny/formscanner/ProcessCSV2.jar result.tmp results.csv\")\n    \n    shinyjs::enable(\"downloadFile\")\n    \n  })\n  \n  output$downloadFile = downloadHandler(\n    filename = function() {\n      paste0(tools::file_path_sans_ext(input$fileUpload$name), \".csv\")\n    },\n\n    content = function(file) {\n      file.copy(\"results.csv\", file)\n    }\n  )\n  \n  session$onSessionEnded(function() {\n    unlink(tempDirectory, recursive = TRUE)\n  })\n})\n",
+    "created" : 1506059473495.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2600581591",
+    "id" : "78B52AD9",
+    "lastKnownWriteTime" : 1506478552,
+    "last_content_update" : 1506478552062,
+    "path" : "~/Documents/RScripts/OMR/server.R",
+    "project_path" : "server.R",
+    "properties" : {
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
