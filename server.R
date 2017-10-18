@@ -3,6 +3,7 @@ library(shinyBS)
 library(shinyjs)
 library(shinydashboard)
 library(xlsx)
+#library(openxlsx)
 
 shinyServer(function(input, output, session) {
   
@@ -69,7 +70,7 @@ shinyServer(function(input, output, session) {
     dir.create("images")
     if (tools::file_ext(input$fileUpload$name) == "pdf") {
       file.copy(inputFile$datapath, "forms.pdf")
-      system("nconvert -xall -dpi 300 -out jpeg -o 'images/form-###.jpeg' forms.pdf")
+      system("nconvert -xall -dpi 300 -out jpeg -o 'images/%.jpeg' forms.pdf")
     } else {
       unzip(inputFile$datapath, exdir = "images")
     }
@@ -83,6 +84,11 @@ shinyServer(function(input, output, session) {
     sheets = getSheets(excelForm)
     addDataFrame(data, sheets[[1]], col.names = FALSE, row.names = FALSE, startRow=2, colStyle = NULL)
     saveWorkbook(excelForm, "results.xlsm")
+    
+    # data = read.csv("results.csv")
+    # excelForm = loadWorkbook(excelType())
+    # writeData(excelForm, "Scan", data, colNames = FALSE, rowNames = FALSE, startRow = 2)
+    # saveWorkbook(excelForm, "results.xlsm")
     
     # output$processResult = renderUI({
     #   helpText(icon("check"), "Scanning Done!")

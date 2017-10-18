@@ -89,9 +89,9 @@ body = dashboardBody(
 #Ugly hack to get links into the header
 header = dashboardHeader(title = "RHScan",
   tags$li(class = "dropdown",
-          tags$a("About", target="_blank", href = "https://google.com")),
+          tags$a("About", target="_blank", href = "http://www.sphericalcows.net/RHScan/about-rhscan.html")),
   tags$li(class = "dropdown",
-          tags$a("Download Forms", target="_blank", href = "https://google.com")),
+          tags$a("Download Forms", target="_blank", href = "http://www.sphericalcows.net/RHScan/download-files.html")),
   tags$li(class = "dropdown",
           tags$a("FAQs", target="_blank", href = "https://google.com")),
   tags$li(class = "dropdown",
