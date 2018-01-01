@@ -19,7 +19,21 @@ body = dashboardBody(
                         c("Please Select a Form Type", 
                           "Hybrid" = "hybrid", 
                           "Numeric" = "numeric", 
-                          "Multiple Choice" = "multi"))
+                          "Multiple Choice" = "multi",
+                          "Upload My Own Template" = "upload")),
+            conditionalPanel(
+              condition = "input.formType == 'upload'",
+              helpText("Please upload the template .xtmpl file."),
+              fileInput("xtmplUpload", label = NULL, 
+                        accept = c(
+                          ".xtmpl"
+                        )),
+              helpText("Please upload the template .xlsm file."),
+              fileInput("xlsmUpload", label = NULL, 
+                        accept = c(
+                          ".xlsm"
+                        ))
+            )
           ))
     })
   ), 

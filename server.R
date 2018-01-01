@@ -3,7 +3,6 @@ library(shinyBS)
 library(shinyjs)
 library(shinydashboard)
 library(xlsx)
-#library(openxlsx)
 
 shinyServer(function(input, output, session) {
   
@@ -21,7 +20,10 @@ shinyServer(function(input, output, session) {
   shinyjs::addClass("downloadBox", "opacity")
   
   observe({
-    if (input$formType != "Please Select a Form Type") {
+    if (input$formType != "Please Select a Form Type" && input$formType != "upload") {
+      shinyjs::addClass("formTypeBox", "opacity")
+      shinyjs::removeClass("uploadBox", "opacity")
+    } else if (input$formType == "upload" && !is.null(input$xtmplUpload) && !is.null(input$xlsmUpload)) {
       shinyjs::addClass("formTypeBox", "opacity")
       shinyjs::removeClass("uploadBox", "opacity")
     }
@@ -37,14 +39,16 @@ shinyServer(function(input, output, session) {
     switch(input$formType,
            "hybrid" = return("/home/shiny/formscanner/Hybrid_v3.2.xtmpl"),
            "numeric" = return("/home/shiny/formscanner/Numeric_v3.2.xtmpl"),
-           "multi" = return("/home/shiny/formscanner/MC6_75_v3.2.xtmpl"))
+           "multi" = return("/home/shiny/formscanner/MC6_75_v3.2.xtmpl"),
+           "upload" = return(input$xtmplUpload$datapath))
   }
   
   excelType = function() {
     switch(input$formType,
-           "hybrid" = return("ResultsHybridv3.2.xlsm"),
-           "numeric" = return("ResultsNumericv3.2.xlsm"),
-           "multi" = return("ResultsMCv3.2.xlsm"))
+           "hybrid" = return("/home/shiny/formscanner/ResultsHybridv3.2.xlsm"),
+           "numeric" = return("/home/shiny/formscanner/ResultsNumericv3.2.xlsm"),
+           "multi" = return("/home/shiny/formscanner/ResultsMCv3.2.xlsm"),
+           "upload" = return(input$xlsmUpload$datapath))
   }
   
   
@@ -69,21 +73,22 @@ shinyServer(function(input, output, session) {
     setwd(tempDirectory)
     dir.create("images")
     if (tools::file_ext(input$fileUpload$name) == "pdf") {
-      file.copy(inputFile$datapath, "forms.pdf")
-      system("nconvert -xall -dpi 300 -out jpeg -o 'images/%.jpeg' forms.pdf")
+      pdfName = gsub(" ", "_", paste0(tools::file_path_sans_ext(input$fileUpload$name), ".pdf"))
+      file.copy(inputFile$datapath, pdfName)
+      system(paste("nconvert -xall -dpi 300 -out jpeg -o images/%.jpeg", pdfName))
     } else {
       unzip(inputFile$datapath, exdir = "images")
     }
     system(paste("/bin/bash formscanner", formType(), "images"))
     system("mv images/*.csv result.tmp")
     system("java -jar /home/shiny/formscanner/ProcessCSV2.jar result.tmp results.csv")
-    system(paste0("cp /home/shiny/formscanner/", excelType(), " ."))
+    # system(paste0("cp /home/shiny/formscanner/", excelType(), " ."))
     
     data = read.csv("results.csv")
-    excelForm = loadWorkbook(excelType())
-    sheets = getSheets(excelForm)
-    addDataFrame(data, sheets[[1]], col.names = FALSE, row.names = FALSE, startRow=2, colStyle = NULL)
-    saveWorkbook(excelForm, "results.xlsm")
+    excelForm = xlsx::loadWorkbook(excelType())
+    sheets = xlsx::getSheets(excelForm)
+    xlsx::addDataFrame(data, sheets[[1]], col.names = FALSE, row.names = FALSE, startRow=2, colStyle = NULL)
+    xlsx::saveWorkbook(excelForm, "results.xlsm")
     
     # data = read.csv("results.csv")
     # excelForm = loadWorkbook(excelType())
