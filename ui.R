@@ -93,9 +93,9 @@ header = dashboardHeader(title = "RHScan",
   tags$li(class = "dropdown",
           tags$a("Download Forms", target="_blank", href = "http://www.sphericalcows.net/RHScan/download-files.html")),
   tags$li(class = "dropdown",
-          tags$a("FAQs", target="_blank", href = "https://google.com")),
+          tags$a("FAQs", target="_blank", href = "http://www.sphericalcows.net/RHScan/FAQs.html")),
   tags$li(class = "dropdown",
-          tags$a("Documentation", target="_blank", href = "https://google.com"))
+          tags$a("Documentation", target="_blank", href = "http://www.sphericalcows.net/RHScan/Docs.html"))
 )
 dashboardPage(
   header,
