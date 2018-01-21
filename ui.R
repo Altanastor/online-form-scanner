@@ -55,15 +55,15 @@ body = dashboardBody(
                       )),
             # uiOutput("processResult")
             conditionalPanel(
-              condition = "output.scanStatus" == "seperating",
+              condition = "output.scanStatus == 'seperating'",
               helpText(icon("spinner", "fa-spin"), "Seperating forms...")
             ),
             conditionalPanel(
-              condition = "output.scanStatus" == "scanning",
+              condition = "output.scanStatus == 'scanning'",
               helpText(icon("spinner", "fa-spin"), "Scanning forms...")
             ),
             conditionalPanel(
-              condition = "output.scanStatus" == "done",
+              condition = "output.scanStatus == 'done'",
               helpText(icon("check"), "Scanning Done!")
             )
           ))

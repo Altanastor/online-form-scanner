@@ -53,6 +53,14 @@ shinyServer(function(input, output, session) {
            "upload" = return(input$xlsmUpload$datapath))
   }
   
+  scanningStatus = reactiveValues()
+  scanningStatus$status = NULL
+  
+  output$scanStatus = reactive({
+    scanningStatus$status
+  })
+  outputOptions(output, 'scanStatus', suspendWhenHidden = FALSE)
+  
   
   # TODO: Change indicator depending on step of process.
   observeEvent(input$fileUpload, {
@@ -67,7 +75,7 @@ shinyServer(function(input, output, session) {
     
     # rv$fileState = "uploaded"
     
-    output$scanStatus = "seperating"
+    scanningStatus$status = "seperating"
     
     if(dir.exists(tempDirectory)) {
       shinyjs::disable("downloadFile")
@@ -92,7 +100,7 @@ shinyServer(function(input, output, session) {
     #   helpText(icon("spinner", "fa-spin"), "Scanning Forms...")
     # })
     
-    output$scanStatus = "scanning"
+    scanningStatus$status = "scanning"
     
     scan = system2("/bin/bash", c("formscanner", formType(), "images"), stdout = TRUE, stderr = TRUE)
     if (!is.null(attr(scan, "status")) && attr(scan, "status") == 1) {
@@ -118,7 +126,7 @@ shinyServer(function(input, output, session) {
       # 
       # shinyjs::show("processResult")
       
-      output$scanStatus = "done"
+      scanningStatus$status = "done"
       
       for (name in downloadInputs) {
         shinyjs::enable(name)
