@@ -81,7 +81,15 @@ shinyServer(function(input, output, session) {
     }
     system(paste("/bin/bash formscanner", formType(), "images"))
     system("mv images/*.csv result.tmp")
-    system("java -jar /home/shiny/formscanner/ProcessCSV2.jar result.tmp results.csv")
+    scan = system2("java",  c("-jar", "/home/shiny/formscanner/ProcessCSV2.jar", "result.tmp", "results.csv"), stdout = TRUE, stderr = TRUE)
+    if (attr(scan, "status") == 1) {
+      showModal(modalDialog(
+        title = "Error",
+        "Formscanner encountered an error while processing your forms. Please check for physical errors such as writing in the margins.",
+        size = "m",
+        footer = modalButton("Dismiss")
+      ))
+    }
     # system(paste0("cp /home/shiny/formscanner/", excelType(), " ."))
     
     data = read.csv("results.csv")
