@@ -89,6 +89,7 @@ shinyServer(function(input, output, session) {
         size = "m",
         footer = modalButton("Dismiss")
       ))
+      shinyjs::runjs("location.reload(true);")
     }
     # system(paste0("cp /home/shiny/formscanner/", excelType(), " ."))
     
