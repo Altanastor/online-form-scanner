@@ -79,9 +79,7 @@ shinyServer(function(input, output, session) {
     } else {
       unzip(inputFile$datapath, exdir = "images")
     }
-    system(paste("/bin/bash formscanner", formType(), "images"))
-    system("mv images/*.csv result.tmp")
-    scan = system2("java",  c("-jar", "/home/shiny/formscanner/ProcessCSV2.jar", "result.tmp", "results.csv"), stdout = TRUE, stderr = TRUE)
+    scan = system2("/bin/bash", c("formscanner", formType(), "images"), stdout = TRUE, stderr = TRUE)
     if (attr(scan, "status") == 1) {
       showModal(modalDialog(
         title = "Error",
@@ -89,8 +87,9 @@ shinyServer(function(input, output, session) {
         size = "m",
         footer = modalButton("Dismiss")
       ))
-      shinyjs::runjs("location.reload(true);")
     }
+    system("mv images/*.csv result.tmp")
+    system("java -jar /home/shiny/formscanner/ProcessCSV2.jar result.tmp results.csv")
     # system(paste0("cp /home/shiny/formscanner/", excelType(), " ."))
     
     data = read.csv("results.csv")
