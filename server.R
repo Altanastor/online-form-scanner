@@ -59,13 +59,15 @@ shinyServer(function(input, output, session) {
     
     #print(formType())
     
-    output$processResult = renderUI({
-      helpText(icon("spinner", "fa-spin"), "Seperating Forms...")
-    })
-    
-    shinyjs::show("processResult")
+    # output$processResult = renderUI({
+    #   helpText(icon("spinner", "fa-spin"), "Seperating Forms...")
+    # })
+    # 
+    # shinyjs::show("processResult")
     
     # rv$fileState = "uploaded"
+    
+    output$scanStatus = "seperating"
     
     if(dir.exists(tempDirectory)) {
       shinyjs::disable("downloadFile")
@@ -86,9 +88,11 @@ shinyServer(function(input, output, session) {
       unzip(inputFile$datapath, exdir = "images")
     }
     
-    output$processResult = renderUI({
-      helpText(icon("spinner", "fa-spin"), "Scanning Forms...")
-    })
+    # output$processResult = renderUI({
+    #   helpText(icon("spinner", "fa-spin"), "Scanning Forms...")
+    # })
+    
+    output$scanStatus = "scanning"
     
     scan = system2("/bin/bash", c("formscanner", formType(), "images"), stdout = TRUE, stderr = TRUE)
     if (!is.null(attr(scan, "status")) && attr(scan, "status") == 1) {
@@ -108,11 +112,13 @@ shinyServer(function(input, output, session) {
       xlsx::addDataFrame(data, sheets[[1]], col.names = FALSE, row.names = FALSE, startRow=2, colStyle = NULL)
       xlsx::saveWorkbook(excelForm, "results.xlsm")
       
-      output$processResult = renderUI({
-        helpText(icon("check"), "Scanning Done!")
-      })
+      # output$processResult = renderUI({
+      #   helpText(icon("check"), "Scanning Done!")
+      # })
+      # 
+      # shinyjs::show("processResult")
       
-      shinyjs::show("processResult")
+      output$scanStatus = "done"
       
       for (name in downloadInputs) {
         shinyjs::enable(name)
