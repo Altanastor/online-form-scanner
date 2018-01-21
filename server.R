@@ -87,43 +87,29 @@ shinyServer(function(input, output, session) {
         size = "m",
         footer = modalButton("Dismiss")
       ))
+    } else {
+      system("mv images/*.csv result.tmp")
+      system("java -jar /home/shiny/formscanner/ProcessCSV2.jar result.tmp results.csv")
+      
+      data = read.csv("results.csv")
+      excelForm = xlsx::loadWorkbook(excelType())
+      sheets = xlsx::getSheets(excelForm)
+      xlsx::addDataFrame(data, sheets[[1]], col.names = FALSE, row.names = FALSE, startRow=2, colStyle = NULL)
+      xlsx::saveWorkbook(excelForm, "results.xlsm")
+      
+      output$processResult = renderUI({
+        helpText(icon("check"), "Scanning Done!")
+      })
+      
+      shinyjs::show("processResult")
+      
+      for (name in downloadInputs) {
+        shinyjs::enable(name)
+      }
+      
+      shinyjs::addClass("uploadBox", "opacity")
+      shinyjs::removeClass("downloadBox", "opacity")
     }
-    system("mv images/*.csv result.tmp")
-    system("java -jar /home/shiny/formscanner/ProcessCSV2.jar result.tmp results.csv")
-    # system(paste0("cp /home/shiny/formscanner/", excelType(), " ."))
-    
-    data = read.csv("results.csv")
-    excelForm = xlsx::loadWorkbook(excelType())
-    sheets = xlsx::getSheets(excelForm)
-    xlsx::addDataFrame(data, sheets[[1]], col.names = FALSE, row.names = FALSE, startRow=2, colStyle = NULL)
-    xlsx::saveWorkbook(excelForm, "results.xlsm")
-    
-    # data = read.csv("results.csv")
-    # excelForm = loadWorkbook(excelType())
-    # writeData(excelForm, "Scan", data, colNames = FALSE, rowNames = FALSE, startRow = 2)
-    # saveWorkbook(excelForm, "results.xlsm")
-    
-    # output$processResult = renderUI({
-    #   helpText(icon("check"), "Scanning Done!")
-    # })
-    
-    # rv$fileState = "processed"
-    
-    output$processResult = renderUI({
-      helpText(icon("check"), "Scanning Done!")
-    })
-    
-    shinyjs::show("processResult")
-    
-    for (name in downloadInputs) {
-      shinyjs::enable(name)
-    }
-    
-    shinyjs::addClass("uploadBox", "opacity")
-    shinyjs::removeClass("downloadBox", "opacity")
-    # shinyjs::show("downloadBox", anim = TRUE)
-    # shinyjs::hide("uploadBox", anim = TRUE)
-    
   })
   
   observeEvent(input$reset, {
