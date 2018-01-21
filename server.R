@@ -31,9 +31,11 @@ shinyServer(function(input, output, session) {
   
   shinyjs::hide("processResult")
   
-  output$processResult = renderUI({
-    helpText(icon("spinner", "fa-spin"), "Scanning forms...")
-  })
+  
+  
+  # output$processResult = renderUI({
+  #   helpText(icon("spinner", "fa-spin"), "Scanning forms...")
+  # })
   
   formType = function() {
     switch(input$formType,
@@ -57,6 +59,10 @@ shinyServer(function(input, output, session) {
     
     #print(formType())
     
+    output$processResult = renderUI({
+      helpText(icon("spinner", "fa-spin"), "Seperating Forms...")
+    })
+    
     shinyjs::show("processResult")
     
     # rv$fileState = "uploaded"
@@ -79,6 +85,11 @@ shinyServer(function(input, output, session) {
     } else {
       unzip(inputFile$datapath, exdir = "images")
     }
+    
+    output$processResult = renderUI({
+      helpText(icon("spinner", "fa-spin"), "Scanning Forms...")
+    })
+    
     scan = system2("/bin/bash", c("formscanner", formType(), "images"), stdout = TRUE, stderr = TRUE)
     if (!is.null(attr(scan, "status")) && attr(scan, "status") == 1) {
       showModal(modalDialog(
