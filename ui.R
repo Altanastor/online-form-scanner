@@ -52,8 +52,8 @@ body = dashboardBody(
                         "application/zip",
                         ".pdf",
                         ".zip"
-                      )),
-            uiOutput("processResult")
+                      ))
+            # uiOutput("processResult")
           ))
       
     })

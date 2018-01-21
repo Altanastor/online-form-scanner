@@ -62,14 +62,20 @@ shinyServer(function(input, output, session) {
   # outputOptions(output, 'scanStatus', suspendWhenHidden = FALSE)
   # 
   
-  rv = reactiveValues(state = NULL)
-  
-  output$processResult = renderUI({
-    rv$state
-  })
+  # rv = reactiveValues(state = NULL)
+  # 
+  # output$processResult = renderUI({
+  #   rv$state
+  # })
   
   # TODO: Change indicator depending on step of process.
   observeEvent(input$fileUpload, {
+    
+    insertUI(
+      selector = "#fileUpload",
+      where = "afterEnd",
+      ui = helpText(id = "seperating", icon("spinner", "fa-spin"), "Seperating Forms...")
+    )
     
     #print(formType())
     
@@ -79,7 +85,7 @@ shinyServer(function(input, output, session) {
     # 
     # shinyjs::show("processResult")
     
-    rv$state = helpText(icon("spinner", "fa-spin"), "Seperating Forms...")
+    # rv$state = helpText(icon("spinner", "fa-spin"), "Seperating Forms...")
     
     # rv$fileState = "uploaded"
     # 
@@ -110,7 +116,17 @@ shinyServer(function(input, output, session) {
     
     # scanningStatus$status = "scanning"
     
-    rv$state = helpText(icon("spinner", "fa-spin"), "Scanning Forms...")
+    # rv$state = helpText(icon("spinner", "fa-spin"), "Scanning Forms...")
+    
+    removeUI(
+      selector = "div:has(> #seperating)"
+    )
+    
+    insertUI(
+      selector = "#fileUpload",
+      where = "afterEnd",
+      ui = helpText(id = "scanning", icon("spinner", "fa-spin"), "Scanning Forms...")
+    )
     
     scan = system2("/bin/bash", c("formscanner", formType(), "images"), stdout = TRUE, stderr = TRUE)
     if (!is.null(attr(scan, "status")) && attr(scan, "status") == 1) {
@@ -138,7 +154,17 @@ shinyServer(function(input, output, session) {
       
       # scanningStatus$status = "done"
       
-      rv$state = helpText(icon("check"), "Scanning Done!")
+      # rv$state = helpText(icon("check"), "Scanning Done!")
+      
+      removeUI(
+        selector = "div:has(> #scanning)"
+      )
+      
+      insertUI(
+        selector = "#fileUpload",
+        where = "afterEnd",
+        ui = helpText(id = "done", icon("check"), "Scanning Done!")
+      )
       
       for (name in downloadInputs) {
         shinyjs::enable(name)
